@@ -1,10 +1,10 @@
 from threading import Thread
 from urllib.request import *
 
-def download_file(init, step, url, data, i):
+def download_file(init, step, d, i):
 	try:
-		req = Request(url, headers={'Range':'bytes=%s-%s'%(init,init+step)})
-		data[i] = bytes(urlopen(req).read())
+		req = Request(d.url, headers={'Range':'bytes=%s-%s'%(init,init+step)})
+		d.data[i] = bytes(urlopen(req).read())
 	except (HTTPError, URLError) as error:
 		print('Data of %s not retrieved because %s\nURL: %s', name, error, url)
 	except timeout:
@@ -13,6 +13,11 @@ def download_file(init, step, url, data, i):
 		print('What?')
 	else:
 		pass
+		
+def resume_download(start, end, d, i, a):
+	req = Request(d.url, headers={'Range':'bytes=%s-%s'%(start,end)})
+	a += bytes(urlopen(req).read())
+	d.data[i] = a
 
 class D_thread(Thread):	
 	def __init__(self, download, arg) :

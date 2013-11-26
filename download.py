@@ -7,4 +7,9 @@ class Download_object:
 		else:
 			self.download_id = 0
 		self.url = url
+		self.paused = 0
 		self.noOfThreads = noOfThreads
+		self.data = []
+		self.pausedFileName = 'none'
+		for i in range(self.noOfThreads):
+			self.data.append(None)
