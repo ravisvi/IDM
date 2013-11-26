@@ -1,10 +1,10 @@
 import threading
-class download_object:
+class Download_object:
 	download_id = 0 
-	def __init__(self, url):
-		if(download_id<2999):
+	def __init__(self, url, noOfThreads):
+		if(Download_object.download_id<2999):
 			self.download_id += 1
-		else
+		else:
 			self.download_id = 0
 		self.url = url
-		
+		self.noOfThreads = noOfThreads

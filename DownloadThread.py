@@ -1,7 +1,7 @@
 from threading import Thread
 from urllib.request import *
 
-def download(init, step, url, data, i):
+def download_file(init, step, url, data, i):
 	try:
 		req = Request(url, headers={'Range':'bytes=%s-%s'%(init,init+step)})
 		data[i] = bytes(urlopen(req).read())
@@ -9,6 +9,8 @@ def download(init, step, url, data, i):
 		print('Data of %s not retrieved because %s\nURL: %s', name, error, url)
 	except timeout:
 		print('socket timed out - URL %s', url)
+	except:
+		print('What?')
 	else:
 		pass
 
