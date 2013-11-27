@@ -1,5 +1,5 @@
 import threading
-import main
+#from main import set_of_downloads
 import download
 from os import system
 from os import path
@@ -7,6 +7,7 @@ import threading
 import glob
 import DownloadThread
 from urllib.request import *
+import time
 
 class HeadRequest(Request):
     def get_method(self):
@@ -41,7 +42,7 @@ def start(d):
 		fileName = "downloads/"+fileNameTemp+'.'+fileType[1]
 	d.fileName = fileName
 
-	f=open(fileName,"ab+")
+	
 	for i in range(d.noOfThreads-1):
 		t.append(DownloadThread.D_thread(DownloadThread.download_file, (init, step, d, i)))
 		init=step+init
@@ -50,14 +51,25 @@ def start(d):
 	t.append(DownloadThread.D_thread(DownloadThread.download_file, (init, step, d, d.noOfThreads-1)))
 	t[d.noOfThreads-1].start()
 
-	d_size = path.getsize(d.fileName)	
+	d_size = 0
+
+	'''for a in range(d.noOfThreads):
+		t[a].join()
+		d.data[a]
+		'''
+	f=open(fileName,"ab+")
+	for a in range(d.noOfThreads):
+		d_size += len(d.data[a])
 	while(d_size<int(size)):
-		d_size = path.getsize(d.fileName)	
+		for a in range(d.noOfThreads):
+			d_size += len(d.data[a])
+	
+
 	if(d_size>=int(size)):
 		for i in range(d.noOfThreads):
 			f.write(d.data[i])
 		print("Download complete")
-		set_of_downloads.remove(d)	
+		#set_of_downloads.remove(d)	
 	f.close()
 
 
@@ -120,7 +132,7 @@ def play(download_object):
 		for i in range(d.noOfThreads):
 			f.write(d.data[i])
 		print("Download complete")
-		set_of_downloads.remove(d)	
+		#set_of_downloads.remove(d)	
 	f.close()
 
 
