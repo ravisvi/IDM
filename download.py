@@ -14,3 +14,7 @@ class Download_object:
 		self.pausedFileName = 'none'
 		for i in range(self.noOfThreads):
 			self.data.append(None)
+
+		'''
+			d_obsect_fields : [url, size, current_size, paused, noOfThreads, data, pausedFileName, fileName]
+		'''

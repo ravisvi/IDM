@@ -69,6 +69,7 @@ def start(d):
 		d_size = 0
 		for a in range(d.noOfThreads):
 			d_size += len(d.data[a])
+			d.current_size = d_size
 	
 
 	if(d_size>=int(size)):
@@ -136,6 +137,7 @@ def play(download_object):
 		d_size = 0
 		for a in range(download_object.noOfThreads):
 			d_size += len(download_object.data[a])
+			d.current_size = d_size
 	
 
 	if(d_size>=int(size)):
