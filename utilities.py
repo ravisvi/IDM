@@ -22,7 +22,7 @@ def start(d):
 	noOfThreads = 1
 	size = content.get('Content-Length')
 	print(size)
-	step = int(size)//d.noOfThreads
+	step = int(size)        #d.noOfThreads
 	init= 0
 	i=0
 	l=glob.glob('*')
