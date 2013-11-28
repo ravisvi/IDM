@@ -7,6 +7,7 @@ class Download_object:
 		else:
 			self.download_id = 0
 		self.url = url
+		self.current_size = 0
 		self.size = 0
 		self.paused = 0
 		self.noOfThreads = noOfThreads
@@ -14,7 +15,9 @@ class Download_object:
 		self.pausedFileName = 'none'
 		for i in range(self.noOfThreads):
 			self.data.append(None)
+		self.thread_list = []
 
 		'''
-			d_obsect_fields : [url, size, current_size, paused, noOfThreads, data, pausedFileName, fileName]
+			d_obsect_fields : [url, size, current_size, paused, noOfThreads, data, pausedFileName, fileName, thread_list]
 		'''
+
