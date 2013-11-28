@@ -9,9 +9,9 @@ def download_file(init, step, d, i):
 		d.data[i] = bytes(urlopen(req).read())
 	
 	except (HTTPError, URLError) as error:
-		print('Data of %s not retrieved because %s\nURL: %s', name, error, url)
+		print('Data of %s not retrieved because %s\nURL: %s', d.fileName, error, d.url)
 	except timeout:
-		print('socket timed out - URL %s', url)
+		print('socket timed out - URL %s', d.url)
 	except:
 		print('What?')
 	else:

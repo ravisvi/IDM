@@ -15,23 +15,55 @@ class HeadRequest(Request):
         return "HEAD"
 
 
-def start(d):
+def downNow(d):
+	t = []
+	step = d.size//d.noOfThreads        
+	init= 0
+	for i in range(d.noOfThreads-1):
+		t.append(DownloadThread.D_thread(DownloadThread.download_file, (init, step, d, i)))
+		init=step+init
+		t[i].start()
+	step = d.size-init
+	t.append(DownloadThread.D_thread(DownloadThread.download_file, (init, step, d, d.noOfThreads-1)))
+	t[d.noOfThreads-1].start()
+
+	os.chdir('downloads')
+	f=open(d.fileName,"ab+")
+	d_size = 0   
+	for a in range(d.noOfThreads):
+		while(d.data[a] == None):
+			pass
+
+	while(d_size<d.size):
+		d_size = 0
+		for a in range(d.noOfThreads):
+			d_size += len(d.data[a])
+			d.current_size = d_size
+	
+
+	if(d_size>=d.size):
+		for i in range(d.noOfThreads):
+			f.write(d.data[i])
+		print("Download complete")
+		#set_of_downloads.remove(d)	
+	f.close()
+
+
+def init_download(d):
 	req = HeadRequest(d.url)
 	response = urlopen(req)
 	response.close()
 	content=dict(response.headers.items())
-	noOfThreads = 1
 	size = content.get('Content-Length')
 	print(size)
-	step = int(size)//d.noOfThreads        
-	init= 0
+	
 	i=0
 	l=glob.glob('*')
 	d.size = int(size)
 
 #list for data
 	
-	t = []
+	
 	if('downloads' not in l):
 		os.makedirs('downloads')
 	fileType = content.get('Content-Type')
@@ -43,43 +75,6 @@ def start(d):
 	else:	
 		fileName = fileNameTemp+'.'+fileType[1]
 	d.fileName = fileName
-
-	
-	for i in range(d.noOfThreads-1):
-		t.append(DownloadThread.D_thread(DownloadThread.download_file, (init, step, d, i)))
-		init=step+init
-		t[i].start()
-	step = int(size)-init
-	t.append(DownloadThread.D_thread(DownloadThread.download_file, (init, step, d, d.noOfThreads-1)))
-	t[d.noOfThreads-1].start()
-
-	d_size = 0
-
-	'''for a in range(d.noOfThreads):
-		t[a].join()
-		d.data[a]
-		'''
-	os.chdir('downloads')
-	f=open(fileName,"ab+")
-        
-	for a in range(d.noOfThreads):
-		while(d.data[a] == None):
-			pass
-
-	while(d_size<int(size)):
-		d_size = 0
-		for a in range(d.noOfThreads):
-			d_size += len(d.data[a])
-			d.current_size = d_size
-	
-
-	if(d_size>=int(size)):
-		for i in range(d.noOfThreads):
-			f.write(d.data[i])
-		print("Download complete")
-		#set_of_downloads.remove(d)	
-	f.close()
-	
         
 
 def pause(thread_list, download_object):
