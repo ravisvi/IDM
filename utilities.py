@@ -79,6 +79,7 @@ def start(d):
 		print("Download complete")
 		#set_of_downloads.remove(d)	
 	f.close()
+	
         
 
 def pause(thread_list, download_object):
