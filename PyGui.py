@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 from utilities import *
-
-
+import download
+import time
 class Example(Frame):
   
     def __init__(self, parent):
@@ -16,16 +16,19 @@ class Example(Frame):
 
 
     def fetch(self):        #Extract URL From the Text field.
-        global counter_entry
+        global counter_entry,list_downloadObj
         url = self.area.get('1.0',END)
+        url = url[:-1]
         #print(url)
-
+        download_object = download.Download_object(url, 4)
+        download_object = start(download_object)
         # Updating the treeview Entry. Retrieve The File Name from URL along with other information
-        #such as thread and size and add it to values field.
-        
+        # such as thread and size and add it to values field.
+        list_downloadObj.append(download_object)
         counter_val = str(counter_entry)+'.'
         counter_entry+=1
-        self.tree.insert('','end',values=(counter_val,url))
+        self.tree.insert('','end',values=(counter_val,download_object.pausedFileName,
+                                          download_object.size,time.ctime(),download_object.noOfThreads))
         #send the url to respective function to download.
 
 
@@ -113,4 +116,5 @@ def main():
 
 if __name__ == '__main__':
     counter_entry = 1
+    list_downloadObj = []
     main()  

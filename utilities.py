@@ -23,7 +23,7 @@ def start(d):
 	noOfThreads = 1
 	size = content.get('Content-Length')
 	print(size)
-	step = int(size)//d.noOfThreads        #d.noOfThreads
+	step = int(size)//d.noOfThreads        
 	init= 0
 	i=0
 	l=glob.glob('*')
@@ -39,9 +39,9 @@ def start(d):
 	fileNameTemp = d.url.split('/')
 	fileNameTemp = fileNameTemp[len(fileNameTemp)-1]
 	if('.' in fileNameTemp):
-		fileName = os.path.join("downloads",fileNameTemp)
+		fileName = fileNameTemp
 	else:	
-		fileName = os.path.join("downloads",fileNameTemp+'.'+fileType[1])
+		fileName = fileNameTemp+'.'+fileType[1]
 	d.fileName = fileName
 
 	
@@ -59,8 +59,9 @@ def start(d):
 		t[a].join()
 		d.data[a]
 		'''
+	os.chdir('downloads')
 	f=open(fileName,"ab+")
-
+        
 	for a in range(d.noOfThreads):
 		while(d.data[a] == None):
 			pass
@@ -78,80 +79,73 @@ def start(d):
 		print("Download complete")
 		#set_of_downloads.remove(d)	
 	f.close()
-
+        
 
 def pause(thread_list, download_object):
-	f = open('.pause_data'+str(download_object.download_id), 'w')
-	download_object.pausedFileName = f.name()
-	for i in range(len(download_object.data)-1):
-		f.write(download_object.data[i])
-		thread_list[i].kill()
-		f.write('xxxx...endofathreadxxxx')
-	f.write(download_object.data[len(download_object.data)-1])
-	download_object.paused = 1
-	f.close()
+        os.chdir('downloads')
+        f = open('.pause_data'+str(download_object.download_id), 'w')
+        download_object.pausedFileName = f.name()
+        for i in range(len(download_object.data)-1):
+            f.write(download_object.data[i])
+            thread_list[i].kill()
+            f.write('xxxx...endofathreadxxxx')
+        f.write(download_object.data[len(download_object.data)-1])
+        download_object.paused = 1
+        f.close()
 
 def play(download_object):
-	f = open(download_object.pausedFileName,'r')
-	a = f.read()
-	a.split('xxxx...endofathreadxxxx')
-	download_object.paused = 0
+        os.chdir('downloads')
+        f = open(download_object.pausedFileName,'r')
+        a = f.read()
+        a.split('xxxx...endofathreadxxxx')
+        download_object.paused = 0
+        req = HeadRequest(download_object.url)
+        response = urlopen(req)
+        response.close()
+        content=dict(response.headers.items())
+        size = content.get('Content-Length')
+        print(size)
+        step = int(size)//download_object.noOfThreads
+        init= 0
+        i=0
+        l=glob.glob('*')
+        #list for data
 
-	req = HeadRequest(download_object.url)
-	response = urlopen(req)
-	response.close()
-	content=dict(response.headers.items())
-	size = content.get('Content-Length')
-	print(size)
-	step = int(size)//download_object.noOfThreads
-	init= 0
-	i=0
-	l=glob.glob('*')
-
-#list for data
-	
-	t = []
-
-	f=open(download_object.fileName,"ab+")
-	for i in range(download_object.noOfThreads-1):
-		t.append(DownloadThread.D_thread(DownloadThread.resume_download, (init+len(a[i]), init + step, download_object, i, a[i])))
-		init=step+init
-		t[i].start()
-	step = int(size)-init
-	t.append(DownloadThread.D_thread(DownloadThread.resume_download, (init+len(a[download_object.noOfThreads-1]), init + step, download_object, download_object.noOfThreads-1, a[download_object.noOfThreads-1])))
-	t[download_object.noOfThreads-1].start()
-
-	d_size = 0
-
-	'''for a in range(d.noOfThreads):
+        t = []
+        f=open(download_object.fileName,"ab+")
+        for i in range(download_object.noOfThreads-1):
+            t.append(DownloadThread.D_thread(DownloadThread.resume_download, (init+len(a[i]), init + step, download_object, i, a[i])))
+            init=step+init
+            t[i].start()
+            step = int(size)-init
+            t.append(DownloadThread.D_thread(DownloadThread.resume_download, (init+len(a[download_object.noOfThreads-1]), init + step, download_object, download_object.noOfThreads-1, a[download_object.noOfThreads-1])))
+            t[download_object.noOfThreads-1].start()
+            d_size = 0
+            '''for a in range(d.noOfThreads):
 		t[a].join()
 		d.data[a]
-		'''
-	f=open(fileName,"ab+")
+	'''
+        f=open(fileName,"ab+")
+        for a in range(download_object.noOfThreads):
+            while(download_object.data[a] == None):
+                pass
 
-	for a in range(download_object.noOfThreads):
-		while(download_object.data[a] == None):
-			pass
+        while(d_size<int(size)):
+            d_size = 0
+        for a in range(download_object.noOfThreads):
+            d_size += len(download_object.data[a])
+            d.current_size = d_size
 
-	while(d_size<int(size)):
-		d_size = 0
-		for a in range(download_object.noOfThreads):
-			d_size += len(download_object.data[a])
-			d.current_size = d_size
-	
-
-	if(d_size>=int(size)):
-		for i in range(download_object.noOfThreads):
-			f.write(download_object.data[i])
-		print("Download complete")
-		#set_of_downloads.remove(d)	
-	f.close()
+        if(d_size>=int(size)):
+            for i in range(download_object.noOfThreads):
+                f.write(download_object.data[i])
+                print("Download complete")
+		#set_of_downloads.remove(d)
+        f.close()
 
 def remove(download_object):
 	os.chdir('downloads')
 	l = glob.glob('*')
-	x = download_object.fileName
-	x = x.split(os.sep)
 	for a in l:
-		if a == x[1]:
+		if a == download_object.fileName:
 			os.remove(a)
