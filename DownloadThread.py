@@ -4,6 +4,7 @@ from urllib.error import *
 
 def download_file(init, step, d, i):
 	try:
+		print(init, init+step)
 		req = Request(d.url, headers={'Range':'bytes=%s-%s'%(init,init+step)})
 		d.data[i] = bytes(urlopen(req).read())
 	

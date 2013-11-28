@@ -3,6 +3,7 @@ import threading
 import download
 from os import system
 from os import path
+import os
 import threading
 import glob
 import DownloadThread
@@ -22,7 +23,7 @@ def start(d):
 	noOfThreads = 1
 	size = content.get('Content-Length')
 	print(size)
-	step = int(size)        #d.noOfThreads
+	step = int(size)//d.noOfThreads        #d.noOfThreads
 	init= 0
 	i=0
 	l=glob.glob('*')
