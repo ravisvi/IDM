@@ -26,20 +26,21 @@ def start(d):
 	init= 0
 	i=0
 	l=glob.glob('*')
+	d.size = int(size)
 
 #list for data
 	
 	t = []
 	if('downloads' not in l):
-		system("mkdir downloads")
+		os.makedirs('downloads')
 	fileType = content.get('Content-Type')
 	fileType = fileType.split('/')
 	fileNameTemp = d.url.split('/')
 	fileNameTemp = fileNameTemp[len(fileNameTemp)-1]
 	if('.' in fileNameTemp):
-		fileName = "downloads/"+fileNameTemp
+		fileName = os.path.join("downloads",fileNameTemp)
 	else:	
-		fileName = "downloads/"+fileNameTemp+'.'+fileType[1]
+		fileName = os.path.join("downloads",fileNameTemp+'.'+fileType[1])
 	d.fileName = fileName
 
 	
@@ -146,6 +147,8 @@ def play(download_object):
 def remove(download_object):
 	os.chdir('downloads')
 	l = glob.glob('*')
+	x = download_object.fileName
+	x = x.split(os.sep)
 	for a in l:
-		if a == download_object.fileName:
+		if a == x[1]:
 			os.remove(a)

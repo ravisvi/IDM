@@ -7,6 +7,7 @@ class Download_object:
 		else:
 			self.download_id = 0
 		self.url = url
+		self.size = 0
 		self.paused = 0
 		self.noOfThreads = noOfThreads
 		self.data = []
