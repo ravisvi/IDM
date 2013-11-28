@@ -18,7 +18,7 @@ class Example(Frame):
     def fetch(self):        #Extract URL From the Text field.
         global counter_entry,list_downloadObj
         url = self.area.get('1.0',END)
-        url = url[:-1]
+        url = url.strip('\n')
         #print(url)
         download_object = download.Download_object(url, 4)
         download_object = start(download_object)
